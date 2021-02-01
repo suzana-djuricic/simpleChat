@@ -1,0 +1,90 @@
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+  <title>Simple Chat</title>
+  <script src="lib/jquery-3.5.1.js"></script>
+  <script src="lib/moment-with-locales.min.js"></script>
+
+  <link rel="stylesheet" href="lib/index.css">
+
+</head>
+<body>
+<div id="main-wrapper">
+  <div id="messages-wrapper">
+  <!-- Messages will be appended here -->
+  </div>
+
+  <div id="send-box">
+    <form id="send-form">
+      <textarea id="content" style="resize:none"></textarea>
+      <input id="btn-send" type="submit" value="Send">
+    </form>
+  </div>
+</div>
+
+
+<script>
+
+/* Authentication is not implemented so we are pretending to be loggedin as user02 */
+  var HARCODED_USER_ID = 2;
+  var ROOT_API = "http://localhost:8080/api";
+
+/* Load all messages from the api (no pagination) */
+  $.getJSON(ROOT_API + "/messages", function(result){
+
+    $.each(result, function(i, field){
+
+      var timestamp = moment(field.timestamp).format('DD MMM YYYY HH:mm');
+
+      if(field.sender.id == 2){
+        $("#messages-wrapper").append('<div class="message from-user">'
+        + '<div class="username">You</div>'
+        + '<div class="content">'
+        + field.content
+        + '</div>'
+        + '<div class="sent-date">'
+        + timestamp
+        + '</div>'
+        + '</div>');
+
+      }else{
+        $("#messages-wrapper").append('<div class="message">'
+        + '<div class="username">user01</div>'
+        + '<div class="content">'
+        + field.content
+        + '</div>'
+        + '<div class="sent-date">'
+        + timestamp
+        + '</div>'
+        + '</div>');
+      }
+    });
+
+    /* After messages are appended, scroll to the bottom */
+    $("#messages-wrapper").scrollTop($("#messages-wrapper")[0].scrollHeight);
+
+  });
+
+  /* Send message callback */
+  $("#send-form").submit(function(e) {
+
+    var form = $(this);
+    var contentValue = $('#content')[0].value;
+
+    /* If the msg content is not empty then the msg can be sent */
+    if(contentValue){
+      var contentWithBreaks = contentValue.split("\n").join("<br/>");
+      $.ajax({
+            type: "POST",
+            dataType: 'json',
+            contentType: 'application/json',
+            url: ROOT_API + "/message?senderId=" + HARCODED_USER_ID,
+            data: JSON.stringify({"content" :  contentWithBreaks})
+          });
+      }else{
+        e.preventDefault();
+      }
+
+  });
+
+</script>
+</body>
