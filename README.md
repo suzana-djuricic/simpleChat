@@ -2,7 +2,8 @@
 Very simple demo chat app created by using Spring Boot /Vanilla js/ mssql
 
 ## How to run
-Copy docker-compose folder and inside folder run 'docker-compose up'
+Copy docker-compose folder and inside folder run 'docker-compose up'.
+After the app started, go to "localhost:8080/index.html"
 
 ## What's implemented
 ### Rest api - used Spring Boot
