@@ -11,11 +11,11 @@ import java.util.List;
 public interface MessagesRepository extends JpaRepository<Message, Long> {
 
     @Query("SELECT m FROM Message m JOIN FETCH m.sender" +
-            " ORDER BY m.timestamp")
+            " ORDER BY m.id")
     public List<Message> getAllMessages();
 
     @Query("SELECT m FROM Message m JOIN FETCH m.sender " +
             " WHERE m.id > :fromId" +
-            " ORDER BY m.timestamp")
+            " ORDER BY m.id")
     public List<Message> getNewMessages(@Param("fromId")Long fromId);
 }
