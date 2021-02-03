@@ -1,0 +1,34 @@
+version: '3.7'
+
+# Define services
+
+ # App Service 
+services:
+  simple_chat_app:
+    image: suzanadjuricic/simple_chat_app:0.0.1
+    ports:
+      - "8080:8080" 
+    restart: always
+    depends_on:
+      - mssql
+
+ # Database Service 
+  mssql:
+    container_name: mssql
+    command: /bin/bash ./entrypoint.sh
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    ports:
+      - "1433:1433"
+    restart: always
+    environment:
+      SA_PASSWORD: "v3ryStr0ngPwd"
+      ACCEPT_EULA: "Y"
+    volumes:
+      - dbdata:/var/opt/mssql/data
+      - ./db/docker-entrypoint.sh:/entrypoint.sh
+      - ./db/docker-db-init.sh:/db-init.sh
+      - ./db/create-and-init-db-chatApp.sql:/db-init.sql
+  
+# Volumes
+volumes:
+  dbdata:
